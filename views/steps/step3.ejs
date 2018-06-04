@@ -1,0 +1,28 @@
+<div id="step<%= step %>-<%= tab %>" class="form-group col-12 col-sm-6 col-md-7 col-lg-4<% if(tab>1) { %> d-none d-lg-block<% } %>">
+    <p class="lead mb-3">Define Cryptographic Parameters</p>
+    <div class="form-group row">
+        <label class="col-5 col-form-label" for="parameter1-<%= tab %>">Key size:</label>
+        <div class="col-7">
+            <select id="parameter1-<%= tab %>" class="custom-select">
+                <option value="128bit" selected>128 bit</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-5 col-form-label" for="parameter2-<%= tab %>">Chaining mode:</label>
+        <div class="col-7">
+            <select id="parameter2-<%= tab %>" class="custom-select">
+                <option value="ECB" selected>ECB</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-5 col-form-label" for="parameter<%= step %>-<%= tab %>">Padding mode:</label>
+        <div class="col-7">
+            <select id="parameter3-<%= tab %>" class="custom-select">
+                <option value="zeros" selected>Zeros</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div id="dummy<%= step %>-<%= tab %>" class="d-none d-lg-block col-lg-4"></div>

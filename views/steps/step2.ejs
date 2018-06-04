@@ -1,0 +1,15 @@
+<div id="step<%= step %>-<%= tab %>" class="col-12 col-sm-6 col-md-7 col-lg-4 mb-4<% if(tab>1) { %> d-none d-lg-block<% } %>">
+    <p class="lead">Choose to Encrypt / Decrypt</p>
+    <div class="form-group">
+        <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="encrypt-<%= tab %>" name="encryptdecrypt-<%= tab %>" class="custom-control-input" onchange="toggleEncryptDecrypt(<%= tab %>)" checked>
+            <label class="custom-control-label" for="encrypt-<%= tab %>">Encrypt</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio" id="decrypt-<%= tab %>" name="encryptdecrypt-<%= tab %>" class="custom-control-input" onchange="toggleEncryptDecrypt(<%= tab %>)">
+            <label class="custom-control-label" for="decrypt-<%= tab %>">Decrypt</label>
+        </div>
+    </div>
+    <%- include('../editor', { step: step, tab: tab, input: true }) %>
+</div>
+<div id="dummy<%= step %>-<%= tab %>" class="d-none d-lg-block col-lg-4"></div>

@@ -1,0 +1,15 @@
+<textarea class="form-control mb-1" id="editor<%= step %>-<%= tab %>" rows="3" <% if(input) { %>oninput="stepInput(<%= tab %>, <%= step %>)" onblur="convertInput(<%= tab %>, <%= step %>)" placeholder="Enter something here &hellip;"<% } else { %>readonly<% } %>></textarea>
+<div id="mode<%= step %>-<%= tab %>" class="form-group">
+    <div class="custom-control custom-radio custom-control-inline float-right">
+        <input type="radio" id="hex<%= step %>-<%= tab %>" name="mode<%= step %>-<%= tab %>" value="hex" class="custom-control-input" onchange="changeMode(<%= tab %>, <%= step %>)">
+        <label class="custom-control-label" for="hex<%= step %>-<%= tab %>">Hex</label>
+    </div>
+    <div class="custom-control custom-radio custom-control-inline float-right">
+        <input type="radio" id="dec<%= step %>-<%= tab %>" name="mode<%= step %>-<%= tab %>" value="dec" class="custom-control-input" onchange="changeMode(<%= tab %>, <%= step %>)">
+        <label class="custom-control-label" for="dec<%= step %>-<%= tab %>">Dec</label>
+    </div>
+    <div class="custom-control custom-radio custom-control-inline float-right">
+        <input type="radio" id="text<%= step %>-<%= tab %>" name="mode<%= step %>-<%= tab %>" value="text" class="custom-control-input" onchange="changeMode(<%= tab %>, <%= step %>)">
+        <label class="custom-control-label" for="text<%= step %>-<%= tab %>">Text</label>
+    </div>
+</div>

@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="Crypto Exhibit is an open-source interactive online cryptography learning exhibit, providing an easy introduction into cryptography, by making the most common cryptographic algorithms accessible and comparable.">
+		<meta name="author" content="Mannheim University of Applied Sciences, Kristian Kraljic">
+
+		<title>Crypto Exhibit - An interactive cryptography learning exhibit</title>
+
+		<!-- Bootstrap and Tether -->
+		<link href="ext/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<link href="ext/tether/css/tether.min.css" rel="stylesheet">
+
+		<!-- Fonts -->
+		<link href="ext/font-awesome/css/fa-solid.min.css" rel="stylesheet" type="text/css">
+		<link href="ext/font-awesome/css/fa-regular.min.css" rel="stylesheet" type="text/css">
+		<link href="ext/font-awesome/css/fontawesome.min.css" rel="stylesheet" type="text/css">
+		<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+		<!-- Stylesheet -->
+		<link href="css/style.min.css" rel="stylesheet">
+	</head>
+
+	<body id="page-top">
+		<div class="container mb-5">
+			<div class="jumbotron mt-3">
+				<h1 class="display-3 text-primary"><i class="fas fa-user-secret"></i> Crypto Exhibit</h1>
+				<p class="lead">&hellip; is an open-source interactive online cryptography learning exhibit, providing an easy introduction into cryptography, by making the most common cryptographic algorithms accessible and comparable.</p>
+				<hr class="my-4">
+				<p>Find all sources available on <a href="https://github.com/informatik-mannheim/crypto-exhibit" target="_blank">GitHub</a>. Crypto Exhibit is suitable for all audiences interested in cryptography.</p>
+				<p class="lead mb-1">
+					<a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+				</p>
+			</div>
+			<div class="row justify-content-between">
+				<%- include('steps/step1', { step: 1, tab: 1, text: 'Start by choosing an Algorithm' }); %>
+				<%- include('steps/step1', { step: 1, tab: 2, text: '&hellip; and compare it to the following:' }); %>
+				<div id="help1" class="d-none d-sm-block col-sm-6 col-md-5 col-lg-4 pt-1">
+					<p id="compare" class="d-none d-lg-block mb-2"><i class="fas text-primary pr-1"></i> <a href="#" onclick="toggleCompare(true); return false"></a></p>
+					<%- include('help', { step: 1, text: 'What is an algorithm?', content: 'This is the template answer.' }) %>
+				</div>
+			</div>
+			<div class="row justify-content-between">
+				<%- include('steps/step2', { step: 2, tab: 1 }) %>
+				<%- include('steps/step2', { step: 2, tab: 2 }) %>
+				<div id="help2" class="d-none d-sm-block col-sm-6 col-md-5 col-lg-4 pt-5">
+					<%- include('help', { step: 2, text: 'What does it mean to encrypt or decrypt?', content: 'This is the template answer.' }) %>
+					<%- include('help', { step: 2, text: 'What is an input value?', content: 'This is the template answer.' }) %>
+					<%- include('help', { step: 2, text: 'What means text / hex?', content: 'This is the template answer.' }) %>
+				</div>
+			</div>
+			<div class="row justify-content-between">
+				<%- include('steps/step3', { step: 3, tab: 1 }) %>
+				<%- include('steps/step3', { step: 3, tab: 2 }) %>
+				<div id="help3" class="d-none d-sm-block col-sm-6 col-md-5 col-lg-4 pt-5">
+					<%- include('help', { step: 3, text: 'What are cryptographic parameters used for?', content: 'This is the template answer.' }) %>
+					<%- include('help', { step: 3, text: 'What does key size mean?', content: 'This is the template answer.' }) %>
+					<%- include('help', { step: 3, text: 'What key size is considered secure?', content: 'This is the template answer.' }) %>
+					<p><button class="btn btn-sm btn-light">more &hellip;</button></p>
+				</div>
+			</div>
+			<div class="row justify-content-between">
+				<%- include('steps/step4', { step: 4, tab: 1 }) %>
+				<%- include('steps/step4', { step: 4, tab: 2 }) %>
+				<div id="help4" class="d-none d-sm-block col-sm-6 col-md-5 col-lg-4 pt-5">
+				</div>
+			</div>
+			<div class="row justify-content-between">
+				<%- include('steps/step5', { step: 5, tab: 1 }) %>
+				<%- include('steps/step5', { step: 5, tab: 2 }) %>
+				<div id="help5" class="d-none d-sm-block col-sm-6 col-md-5 col-lg-4 pt-4">
+					<%- include('help', { step: 5, text: 'Explain the output', content: 'This is the template answer.' }) %>
+					<%- include('help', { step: 5, text: 'How can I decrypt this again?', content: 'This is the template answer.' }) %>
+					<%- include('help', { step: 5, text: 'Can I start over?', content: 'This is the template answer.' }) %>
+				</div>
+			</div>
+		</div>
+		
+		<!-- jQuery, Bootstrap and Tether -->
+		<script src="ext/jquery/jquery.min.js"></script>
+		<script src="ext/bootstrap/js/bootstrap.bundle.min.js"></script>
+		<script src="ext/tether/js/tether.min.js"></script>
+
+		<!-- Other Libraries -->
+		<script src="ext/big-integer/BigInteger.js"></script>
+
+		<!-- Custom JavaScript -->
+		<script src="js/script.min.js"></script>
+	</body>
+</html>

@@ -1,0 +1,6 @@
+<div id="step<%= step %>-<%= tab %>" class="col-12 col-sm-6 col-md-7 col-lg-4 mb-4<% if(tab>1) { %> d-none d-lg-block<% } %>">
+    <button id="encryptdecrypt-<%= tab %>" class="btn btn-primary btn-lg" onclick="encryptDecrypt(<%= tab %>); stepInput(<%= tab %>, 4); return false">
+        <i class="fas fa-lg fa-user-secret pr-2"></i> <span>Encrypt</span>
+    </button>
+</div>
+<div id="dummy<%= step %>-<%= tab %>" class="d-none d-lg-block col-lg-4"></div>
