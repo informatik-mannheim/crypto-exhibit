@@ -21,12 +21,12 @@
     "gulp-rename": "^1.2.3",
     "gulp-uglify": "^3.0.0",
     "jquery": "^3.3.1",
-    "tether": "^1.4.4",
-    "popper.js": "^1.14.3"
+    "popper.js": "^1.14.3",
+    "tether": "^1.4.4"
   },
   "dependencies": {
-    "big-integer": "^1.6.30",
     "ejs": "^2.6.1",
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "node-forge": "^0.7.5"
   }
 }

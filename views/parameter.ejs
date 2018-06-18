@@ -1,0 +1,22 @@
+<% var id = [algorithm, name].join('_'); -%>
+<div class="form-group row" id="group<%= id %>-<%= tab %>">
+    <% var match; if(match=/^editor(?:\((.*)\))?$/i.exec(type)) { %>
+    <label class="col-12 col-form-label" for="parameter<%= id %>-<%= tab %>"><%- label %>:</label>
+    <div class="col-12">
+        <%- include('editor', { step: step, tab: tab, name: 'parameter'+id, mode: match[1], value: value }) %>
+    </div>
+    <% } else { %>
+    <label class="col-5 col-form-label" for="parameter<%= id %>-<%= tab %>"><%- label %>:</label>
+    <div class="col-7">
+        <% switch(type) {
+            case 'number': %>
+        <input type="number" id="parameter<%= id %>-<%= tab %>" class="form-control" placeholder="" oninput="stepInput(<%= tab %>, <%= step %>)" data-value="<%= value %>">
+        <% break; 
+            case 'select': %>
+        <select id="parameter<%= id %>-<%= tab %>" class="custom-select" onchange="stepInput(<%= tab %>, <%= step %>)">
+            <option value="128bit" selected>128 bit</option>
+        </select>
+        <% } %>
+    </div>
+    <% } %>
+</div>
