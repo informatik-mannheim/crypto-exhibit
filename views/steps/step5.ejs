@@ -1,5 +1,5 @@
-<div id="step<%= step %>-<%= tab %>" class="col-12 col-sm-6 col-md-7 col-lg-4<% if(tab>1) { %> d-none d-lg-block<% } %>">
+<div id="step-<%= step %>[<%= tab %>]" class="col-12 col-sm-6 col-md-7 col-lg-4<% if(tab>1) { %> d-none d-lg-block<% } %>">
     <p class="lead mb-2">Result</p>
     <%- include('../editor', { step: step, tab: tab, name: 'output', input: false }) %>
 </div>
-<div id="dummy<%= step %>-<%= tab %>" class="d-none d-lg-block col-lg-4"></div>
+<div id="dummy-<%= step %>[<%= tab %>]" class="d-none d-lg-block col-lg-4"></div>

@@ -81,7 +81,7 @@ gulp.task('copy', function() {
 	gulp.src(['node_modules/responsive-toolkit/dist/bootstrap-toolkit.js', 'node_modules/responsive-toolkit/dist/bootstrap-toolkit.min.js'])
 		.pipe(gulp.dest('ext/bootstrap-toolkit'))
 
-	gulp.src(['node_modules/node-forge/dist/forge.min.js'])
+	gulp.src(['node_modules/node-forge/dist/forge.min.js', 'node_modules/node-forge/dist/forge.all.min.js'])
 		.pipe(gulp.dest('ext/forge'))
 });
 

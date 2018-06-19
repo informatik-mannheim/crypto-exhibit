@@ -1,11 +1,21 @@
-<div id="step<%= step %>-<%= tab %>" class="form-group col-12 col-sm-6 col-md-7 col-lg-4 mb-4<% if(tab>1) { %> d-none d-lg-block<% } %>">
-    <label for="algorithm-<%= tab %>" class="lead"><%- text %></label>
-    <select id="algorithm-<%= tab %>" class="custom-select" onchange="stepInput(<%= tab %>, <%= step %>)">
+<div id="step-<%= step %>[<%= tab %>]" class="form-group col-12 col-sm-6 col-md-7 col-lg-4 mb-4<% if(tab>1) { %> d-none d-lg-block<% } %>">
+    <label for="algorithm[<%= tab %>]" class="lead"><%- text %></label>
+    <select id="algorithm[<%= tab %>]" class="custom-select" onchange="stepInput(<%= tab %>, <%= step %>)">
         <option value="" selected>- Click here to choose -</option>
-        <option value="aes">AES (Advanced Encryption Standard)</option>
-        <option value="ceasar">Caesar Chiffre</option>
-        <option value="des">DES (Data Encryption Standard)</option>
-        <option value="rsa">RSA (Rivest, Shamir and Adleman)</option>
+        <optgroup label="Symmetric Key Algorithms">
+            <option value="aes">AES (Advanced Encryption Standard)</option>
+            <option value="des">DES (Data Encryption Standard)</option>
+            <option value="rc2">RC2 (Rivest Cipher / Ron's Code)</option>
+        </optgroup>
+        <optgroup label="Asymmetric Cryptography">
+            <option value="rsa" disabled>RSA (Rivest, Shamir and Adleman)</option>
+        </optgroup>
+        <optgroup label="Substitution Ciphers">
+            <option value="rot">ROT-N (Rotate by N) / Caesar Chiffre</option>
+        </optgroup>
+        <optgroup label="Hash Functions">
+            <option value="md5" disabled>MD5 (Message-Digest Algorithm 5)</option>
+        </optgroup>
     </select>
 </div>
-<div id="dummy<%= step %>-<%= tab %>" class="d-none"></div>
+<div id="dummy-<%= step %>[<%= tab %>]" class="d-none"></div>

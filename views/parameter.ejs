@@ -1,20 +1,29 @@
-<% var id = [algorithm, name].join('_'); -%>
-<div class="form-group row" id="group<%= id %>-<%= tab %>">
+<% var id = ['parameter', algorithm, name].join('-'), placeholder = placeholder; -%>
+<div class="form-group row" id="group-<%= algorithm %>-<%= name %>[<%= tab %>]">
     <% var match; if(match=/^editor(?:\((.*)\))?$/i.exec(type)) { %>
-    <label class="col-12 col-form-label" for="parameter<%= id %>-<%= tab %>"><%- label %>:</label>
+    <label class="col-12 col-form-label" for="<%= id %>[<%= tab %>]"><%- label %>:</label>
     <div class="col-12">
-        <%- include('editor', { step: step, tab: tab, name: 'parameter'+id, mode: match[1], value: value }) %>
+        <%- include('editor', { step: step, tab: tab, name: id, mode: match[1], value: value }) %>
+    </div>
+    <% } else if(type=='checkbox') { %>
+    <div class="col-12">
+        <div class="form-check custom-control custom-checkbox">
+            <input type="checkbox" id="<%= id %>[<%= tab %>]" class="custom-control-input">
+            <label class="custom-control-label" for="<%= id %>[<%= tab %>]"><%- label %></label>
+        </div>
     </div>
     <% } else { %>
-    <label class="col-5 col-form-label" for="parameter<%= id %>-<%= tab %>"><%- label %>:</label>
-    <div class="col-7">
+    <label class="col-12 col-form-label" for="<%= id %>[<%= tab %>]"><%- label %>:</label>
+    <div class="col-12">
         <% switch(type) {
             case 'number': %>
-        <input type="number" id="parameter<%= id %>-<%= tab %>" class="form-control" placeholder="" oninput="stepInput(<%= tab %>, <%= step %>)" data-value="<%= value %>">
+        <input type="number" id="<%= id %>[<%= tab %>]" class="form-control" placeholder="<%= placeholder %>" oninput="stepInput(<%= tab %>, <%= step %>)" data-value="<%= value %>">
         <% break; 
             case 'select': %>
-        <select id="parameter<%= id %>-<%= tab %>" class="custom-select" onchange="stepInput(<%= tab %>, <%= step %>)">
-            <option value="128bit" selected>128 bit</option>
+        <select id="<%= id %>[<%= tab %>]" class="custom-select" onchange="stepInput(<%= tab %>, <%= step %>)">
+            <% var options = options||[]; for(var index=0; index<options.length; index++) { -%>
+            <option value="<%= options[index].value %>"<% if(options[index].value==value) { %> selected<% } %>><%= options[index].label %></option>
+            <% } -%>
         </select>
         <% } %>
     </div>
