@@ -1,32 +1,8 @@
 <div id="step-<%= step %>[<%= tab %>]" class="form-group col-12 col-sm-6 col-md-7 col-lg-4<% if(tab>1) { %> d-none d-lg-block<% } %>">
     <p class="lead mb-3">Define Cryptographic Parameters</p>
 
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'aes', name: 'mode', label: 'Mode of Operation', type: 'select', value: 'CBC', options: [
-        { value: 'ECB', label: 'Electronic Codebook (ECB)' },
-        { value: 'CBC', label: 'Cipher Block Chaining (CBC)' },
-        { value: 'CFB', label: 'Cipher Feedback (CFB)' },
-        { value: 'OFB', label: 'Output Feedback (OFB)' },
-        { value: 'CTR', label: 'Counter (CTR)' },
-        { value: 'GCM', label: 'Galois/Counter Mode (GCM)' }
-    ] }) %>
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'aes', name: 'key', label: 'Symmetric Key', type: 'editor(hex)', value: 'randomBytes(16)', placeholder: 'TODO' }) %>
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'aes', name: 'iv', label: 'Initialization Vector', type: 'editor(hex)', value: 'randomBytes(16)', placeholder: 'TODO' }) %>
-
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'des', name: 'mode', label: 'Mode of Operation', type: 'select', value: 'CBC', options: [
-        { value: 'ECB', label: 'Electronic Codebook (ECB)' },
-        { value: 'CBC', label: 'Cipher Block Chaining (CBC)' }
-    ] }) %>
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'des', name: 'triple', label: 'Enforce to always use Triple-DES', type: 'checkbox', value: 'false', }) %>
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'des', name: 'key', label: 'Symmetric Key', type: 'editor(hex)', value: 'randomBytes(16)', placeholder: 'TODO' }) %>
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'des', name: 'iv', label: 'Initialization Vector', type: 'editor(hex)', value: 'randomBytes(16)', placeholder: 'TODO' }) %>
-
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'rc2', name: 'key', label: 'Symmetric Key', type: 'editor(hex)', value: 'randomBytes(16)', placeholder: 'TODO' }) %>
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'rc2', name: 'iv', label: 'Initialization Vector', type: 'editor(hex)', value: 'randomBytes(8)', placeholder: 'TODO' }) %>
-
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'rot', name: 'places', label: 'Rotate by Places', type: 'number', value: '13', placeholder: 'TODO' }) %>
-
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'rsa', name: 'p', label: 'Primefactor P', type: 'number', value: 'randomPrime(32)', placeholder: 'TODO' }) %>
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'rsa', name: 'q', label: 'Primefactor Q', type: 'number', value: 'randomPrime(32)', placeholder: 'TODO' }) %>
-    <%- include('../parameter', { step: step, tab: tab, algorithm: 'rsa', name: 'e', label: 'Exponent E', type: 'number', value: 'rsaRandomE('+tab+')', placeholder: 'TODO' }) %>
+    <% algorithms.forEach(algorithm=>(algorithm.parameters||[]).forEach(parameter=>{ %>
+        <%- include('../parameter', Object.assign({ step: step, tab: tab, algorithm: algorithm.name }, parameter)); %>
+    <% })); %>
 </div>
 <div id="dummy-<%= step %>[<%= tab %>]" class="d-none d-lg-block col-lg-4"></div>

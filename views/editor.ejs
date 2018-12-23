@@ -1,15 +1,15 @@
-<textarea class="form-control mb-1" id="<%= name %>[<%= tab %>]" rows="3" <% var input = input||true; if(input) { %>oninput="stepInput(<%= tab %>, <%= step %>)" onblur="convertEditor(<%= tab %>, '<%= name %>')" placeholder="Enter something here &hellip;"<% } else { %>readonly<% } %><% var mode = mode; if(mode) { %> data-mode="<%= mode %>"<% } %><% var value = value; if(value) { %> data-value="<%= value %>"<% }%>></textarea>
-<div id="<%= name %>-mode[<%= tab %>]" class="form-group">
+<textarea class="form-control mb-1" id="<%= name %>[<%= tab %>]" rows="3" <% var input = input||true; if(input) { %>oninput="cryptoExhibit.stepInput(<%= tab %>, <%= step %>)" onblur="cryptoExhibit.convertEditor(<%= tab %>, '<%= name %>')" placeholder="Enter something here &hellip;"<% } else { %>readonly<% } %><% var mode = mode; if(mode) { %> data-mode="<%= mode %>"<% } %><% var value = value; if(value) { %> data-value="<%= value %>"<% }%>></textarea>
+<div id="mode-<%= name %>[<%= tab %>]" class="form-group">
     <div class="custom-control custom-radio custom-control-inline float-right">
-        <input type="radio" id="<%= name %>-hex[<%= tab %>]" name="<%= name %>-mode[<%= tab %>]" value="hex" class="custom-control-input" onchange="changeMode(<%= tab %>, '<%= name %>')">
-        <label class="custom-control-label" for="<%= name %>-hex[<%= tab %>]">Hex</label>
+        <input type="radio" id="mode-<%= name %>-hex[<%= tab %>]" name="mode-<%= name %>[<%= tab %>]" value="hex" class="custom-control-input" onchange="cryptoExhibit.changeMode(<%= tab %>, '<%= name %>')">
+        <label class="custom-control-label" for="mode-<%= name %>-hex[<%= tab %>]">Hex</label>
     </div>
     <div class="custom-control custom-radio custom-control-inline float-right">
-        <input type="radio" id="<%= name %>-dec[<%= tab %>]" name="<%= name %>-mode[<%= tab %>]" value="dec" class="custom-control-input" onchange="changeMode(<%= tab %>, '<%= name %>')">
-        <label class="custom-control-label" for="<%= name %>-dec[<%= tab %>]">Dec</label>
+        <input type="radio" id="mode-<%= name %>-dec[<%= tab %>]" name="mode-<%= name %>[<%= tab %>]" value="dec" class="custom-control-input" onchange="cryptoExhibit.changeMode(<%= tab %>, '<%= name %>')">
+        <label class="custom-control-label" for="mode-<%= name %>-dec[<%= tab %>]">Dec</label>
     </div>
     <div class="custom-control custom-radio custom-control-inline float-right">
-        <input type="radio" id="<%= name %>-text[<%= tab %>]" name="<%= name %>-mode[<%= tab %>]" value="text" class="custom-control-input" onchange="changeMode(<%= tab %>, '<%= name %>')" checked>
-        <label class="custom-control-label" for="<%= name %>-text[<%= tab %>]">Text</label>
+        <input type="radio" id="mode-<%= name %>-text[<%= tab %>]" name="mode-<%= name %>[<%= tab %>]" value="text" class="custom-control-input" onchange="cryptoExhibit.changeMode(<%= tab %>, '<%= name %>')" checked>
+        <label class="custom-control-label" for="mode-<%= name %>-text[<%= tab %>]">Text</label>
     </div>
 </div>

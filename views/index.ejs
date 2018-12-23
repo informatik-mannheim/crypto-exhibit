@@ -37,7 +37,7 @@
 				<%- include('steps/step1', { step: 1, tab: 1, text: 'Start by choosing an Algorithm' }); %>
 				<%- include('steps/step1', { step: 1, tab: 2, text: '&hellip; and compare it to the following:' }); %>
 				<div id="help-1" class="d-none d-sm-block col-sm-6 col-md-5 col-lg-4 pt-1">
-					<p id="compare" class="d-none d-lg-block mb-2"><i class="fas text-primary pr-1"></i> <a href="#" onclick="toggleCompare(true); return false"></a></p>
+					<p id="compare" class="d-none d-lg-block mb-2"><i class="fas text-primary pr-1"></i> <a href="#" onclick="cryptoExhibit.toggleCompare(true); return false"></a></p>
 					<%- include('help', { step: 1, text: 'What is an algorithm?', content: 'This is the template answer.' }) %>
 					<%- include('more', { step: 1 }); %>
 				</div>
@@ -87,10 +87,19 @@
 		<script src="ext/bootstrap/js/bootstrap.bundle.min.js"></script>
 		<script src="ext/tether/js/tether.min.js"></script>
 
-		<!-- Other Libraries -->
-		<script src="ext/forge/forge.all.min.js"></script>
-
-		<!-- Custom JavaScript --> <!-- TODO switch to min -->
-		<script src="js/script.js"></script>
+		<!-- Custom JavaScript -->
+		<script src="ext/requirejs/require.min.js"></script>
+		<script>
+			requirejs.config({
+				baseUrl: 'js',
+				paths: {
+					'amd-loader': '../ext/amd-loader', 'cjs': '../ext/cjs',
+					'node-forge': '../ext/forge/forge.min'
+				}
+			});
+			requirejs(['cjs!main'], function(main) {
+				window.cryptoExhibit = main;
+			});
+		</script>
 	</body>
 </html>

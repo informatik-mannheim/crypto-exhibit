@@ -1,6 +1,11 @@
-var express = require('express');
-var app = express();
-var router = express.Router();
+global.isNode = true;
+global.helper = require('./helper');
+const express = require('express');
+
+let app = express(), router = express.Router();
+
+// list all algorithms
+global.algorithms = helper.requireAlgorithms();
 
 // set view engine
 app.set('view engine', 'ejs');

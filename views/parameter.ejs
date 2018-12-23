@@ -17,10 +17,10 @@
     <div class="col-12">
         <% switch(type) {
             case 'number': %>
-        <input type="number" id="<%= id %>[<%= tab %>]" class="form-control" placeholder="<%= placeholder %>" oninput="stepInput(<%= tab %>, <%= step %>)" data-value="<%= value %>">
+        <input type="number" id="<%= id %>[<%= tab %>]" class="form-control" placeholder="<%= placeholder %>" oninput="cryptoExhibit.stepInput(<%= tab %>, <%= step %>)" data-value="<%= value %>">
         <% break; 
             case 'select': %>
-        <select id="<%= id %>[<%= tab %>]" class="custom-select" onchange="stepInput(<%= tab %>, <%= step %>)">
+        <select id="<%= id %>[<%= tab %>]" class="custom-select" onchange="cryptoExhibit.stepInput(<%= tab %>, <%= step %>)">
             <% var options = options||[]; for(var index=0; index<options.length; index++) { -%>
             <option value="<%= options[index].value %>"<% if(options[index].value==value) { %> selected<% } %>><%= options[index].label %></option>
             <% } -%>
