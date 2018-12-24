@@ -1,1 +1,8 @@
-<% var algorithm = algorithm||'all'; %><p class="mb-1" data-help="<%= algorithm %>"><i class="far fa-question-circle text-primary pr-1"></i> <a href="#" onclick="return false" role="button" data-toggle="popover" data-trigger="focus" data-content="<strong>Answer:</strong> <%= content %>" data-placement="top" data-html="true"><%- text %></a></p>
+<div id="help-<%= step %>" class="d-none d-sm-block col-sm-6 col-md-5 col-lg-4 pt-1">
+    <% if(step==1) { %>
+    <p id="compare" class="d-none d-lg-block mb-2"><i class="fas text-primary pr-1"></i> <a href="#" onclick="cryptoExhibit.toggleCompare(true); return false"></a></p>
+    <% } (help[step]||[]).forEach((help) => { %>
+    <p class="mb-1" data-help="<%= help.algorithm %>"><i class="far fa-question-circle text-primary pr-1"></i> <a href="#" onclick="return false" role="button" data-toggle="popover" data-trigger="focus" data-content="<%= help.content %>" data-placement="top" data-html="true"><%- help.title %></a></p>
+    <% }); %>
+    <button class="btn btn-sm btn-light" onclick="cryptoExhibit.showMore(<%= step %>)">more &hellip;</button>
+</div>

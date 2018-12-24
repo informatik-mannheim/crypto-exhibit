@@ -8,6 +8,9 @@ String.prototype.rot = function(places) {
 exports.name = 'rot';
 exports.displayName = 'ROT-N (Rotate by N) / Caesar Chiffre';
 exports.group = 'Substitution Ciphers';
+exports.parameters = [
+    { name: 'places', label: 'Rotate by Places', type: 'number', value: '13', placeholder: 'TODO' }
+];
 
 exports.apply = function(input, parameters, action) {
 	input.rot((action=="encrypt"?1:-1)*parameters.places);

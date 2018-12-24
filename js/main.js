@@ -296,7 +296,7 @@ function toggleParameters(tab, algorithm, animate) {
 							stepInput(tab, steps.input); // simulate an input step, in oder to continue to the next step, if all parameters are provided
 						}
 					};
-					if(/\(.*\)$/i.test(value)&&jQuery.isFunction((value=util.limitedScopeEval(value/*, { parameters: parameterValue(tab, algorithm) }*/)||String()).promise))
+					if(/\(.*\)$/i.test(value)&&jQuery.isFunction((value=util.limitedScopeEval(value, [tab])||String()).promise))
 						value.then(fnValue);
 					else fnValue(value);
 				}

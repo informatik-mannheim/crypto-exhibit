@@ -4,6 +4,11 @@ var BigInteger = forge.jsbn.BigInteger;
 exports.name = 'rsa';
 exports.displayName = 'RSA (Rivest, Shamir and Adleman)';
 exports.group = 'Asymmetric Cryptography';
+exports.paramters = [
+    { name: 'p', label: 'Primefactor P', type: 'number', value: 'cryptoExhibit.util.randomPrime(32)', placeholder: 'TODO' },
+    { name: 'q', label: 'Primefactor Q', type: 'number', value: 'cryptoExhibit.util.randomPrime(32)', placeholder: 'TODO' },
+    { name: 'e', label: 'Exponent E', type: 'number', value: 'cryptoExhibit.algorithms.rsa.randomE(tab)', placeholder: 'TODO' }
+];
 
 function randomE(tab) {
 	return jQuery.Deferred(function(defer) {

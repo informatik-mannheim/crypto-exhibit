@@ -4,8 +4,9 @@ const express = require('express');
 
 let app = express(), router = express.Router();
 
-// list all algorithms
+// list all algorithms & build help
 global.algorithms = helper.requireAlgorithms();
+global.help = helper.groupArray(helper.buildHelp(), 'step');
 
 // set view engine
 app.set('view engine', 'ejs');
