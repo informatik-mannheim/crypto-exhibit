@@ -329,7 +329,7 @@ function toggleStep(tab, step, done, animate) {
 		});
 		jQuery.elements('help', ':'+(done||'gt')+'('+Math.max(step-1, jQuery.elements(otherTab(tab), 'step', ':visible').length-1)+')').conceal(animate);
 	} else { // show the next step
-		jQuery.element(tab, 'step', step+1).reveal(animate);
+		jQuery.element(tab, 'step', step+1).stop().reveal(animate);
 		jQuery.element(tab, 'dummy', step+1).conceal();
 		jQuery.element('help', step+1).reveal(animate);
 		stepInput(tab, step+1); // simulate input to check if next step is also ready
