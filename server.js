@@ -23,14 +23,8 @@ app.set('view engine', 'ejs');
     });
 });
 
-// temporary landing page
-app.get('/', (req, res) => {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end('Coming soon...');
-});
-
 // expose index template
-app.get('/preview', (req, res) => {
+app.get('/', (req, res) => {
     res.render('index');
 });
 
