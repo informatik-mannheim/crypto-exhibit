@@ -12,7 +12,7 @@ exports.requireAlgorithm = function(nameOrPath) {
 
     try {
         var algorithm = require(nameOrPath);
-        ['name', 'displayName', 'apply'].forEach(required=>
+        ['name', 'displayName'].forEach(required=>
             assert(algorithm[required], "Algorithm '"+required+"' missing"));
         algorithm.group = algorithm.group||'Miscellaneous';
 
@@ -25,7 +25,7 @@ exports.requireAlgorithm = function(nameOrPath) {
 
 exports.requireAlgorithms = function() {
     console.log('Loading algorithms...');
-    return glob.sync('js/algorithms/*.js', { absolute: true }).filter(path=>!path.endsWith('.min.js'))
+    return glob.sync('js/algorithms/*.js', { absolute: true }).filter(path=>!path.endsWith('.min.js')&&!path.endsWith('template.js'))
         .map(path=>(exports.requireAlgorithm(path))).filter(algorithm=>algorithm); //remove undefined algorithms (failed to load)
 };
 

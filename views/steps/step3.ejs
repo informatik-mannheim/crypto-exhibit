@@ -1,5 +1,5 @@
 <div id="step-<%= step %>[<%= tab %>]" class="form-group col-12 col-sm-6 col-md-7 col-lg-4<% if(tab>1) { %> d-none d-lg-block<% } %>">
-    <p class="lead mb-3">Define Cryptographic Parameters</p>
+    <p class="lead mb-2">Define Cryptographic Parameters</p>
 
     <% algorithms.forEach(algorithm=>(algorithm.parameters||[]).forEach(parameter=>{ %>
         <%- include('../parameter', Object.assign({ step: step, tab: tab, algorithm: algorithm.name }, parameter)); %>

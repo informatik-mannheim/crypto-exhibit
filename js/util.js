@@ -6,6 +6,7 @@ exports.limitedScopeEval = function() {
 		'var '+name+' = arguments[1][name];');
 	return eval(arguments[0]);
 }
+
 function convert(str) {
 	if(!('functions' in convert)) convert.functions = {
 		'hex': {
@@ -32,8 +33,8 @@ function convert(str) {
 			to: function() {
 				jQuery.each(arguments, function(index, to) {
 					if(from!=to) {
-						str = convert.functions
-							[from][to](str);
+						str = from!='dec'||!/^0+$/.test(str)?
+							convert.functions[from][to](str):String();
 						from = to;
 					}
 				}); return str; /*arguments.length?convert.functions //last step is always to convert it to the output format
@@ -59,3 +60,17 @@ exports.randomPrime = function(bits) {
 		});
 	}).promise();
 }
+
+exports.downloadBlob = (function() {
+	if(!window.document) return null; //running in our web worker
+	var link = document.createElement('a');
+	document.body.appendChild(link);
+	link.style = 'display: none';
+	return function(blob, fileName) {
+		var url = URL.createObjectURL(blob);
+		link.href = url;
+		link.download = fileName;
+		link.click();
+		URL.revokeObjectURL(url);
+	};
+})();

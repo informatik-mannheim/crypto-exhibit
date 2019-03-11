@@ -1,4 +1,4 @@
-var util = exports.util = require('./util'), convert = util.convert;
+var shared = require('./shared'), algorithms = shared.algorithms, util = exports.util = require('./util'), convert = util.convert, worker = new Worker('js/worker.min.js');
 
 //#region Prototypes
 
@@ -50,7 +50,7 @@ jQuery.fn.reveal = function(animate) {
 jQuery.fn.conceal = function(animate) {
 	return this.fadeOut(animate?'fast':0, function() {
 		// called for every element animated
-		jQuery(this).attr("style", "display:none!important");
+		jQuery(this).attr('style', 'display:none!important');
 	});
 };
 jQuery.fn.revealOrConceal = function(visible, animate) {
@@ -111,7 +111,7 @@ function matchParameterId(id) {
 function parameterValue(tab, algorithm, name) {
 	var value = function(parameter) {
 		if(parameter.prop('tagName')=='TEXTAREA')
-			return convert(parameter.val()).from(getMode(tab, matchElementId(parameter.attr('id'))[1])).to('text');
+			return editorValue(tab, matchElementId(parameter.attr('id'))[1], 'text');
 		else if(parameter.attr('type')=='checkbox')
 			return parameter.is(':checked');
 		else return parameter.val();
@@ -138,6 +138,8 @@ function parameterValue(tab, algorithm, name) {
 		toggleStep(2, 1, false); // hide tab 2
 		toggleCompare(false, false); // hide compare
 		toggleHelp(1, null, false); // hide non-generic helps
+		jQuery.element(1, 'loading').hide(); // hide the loading indicator tab 1
+		jQuery.element(2, 'loading').hide(); // hide the loading indicator tab 2
 		jQuery('textarea[data-mode]').each(function() {
 			var that = jQuery(this), id = matchElementId(that.attr('id'));
 			changeMode(parseInt(id[2]), id[1], that.data('mode'));
@@ -163,33 +165,54 @@ var steps = (function(step) {
 	};
 }());
 
-var algorithms = {}; // will be filled by required modules
 function getAlgorithm(tab) {
 	return jQuery.element(tab, 'algorithm').val();
 }
-function requireAlgorithm(algorithm) {
-	return new Promise(function(resolve, reject) {
-		require([ 'cjs!algorithms/'+algorithm+'.min' ], function(module) {
-			algorithms[algorithm] = module;	
-			resolve();
-		});
-	})
-}
 function applyAlgorithm(tab) {
-	var algorithm = getAlgorithm(tab), action = getAction(tab), module = algorithms[algorithm],
-		apply = jQuery.isPlainObject(module)?(module.apply||module[action]):module;
-	if(!jQuery.isFunction(apply)) {
-		//TODO
-	}
+	var button = jQuery.element(tab, 'apply').prop('disabled', true), loading = jQuery.element(tab, 'loading'),
+		algorithm = getAlgorithm(tab), action = getAction(tab), module = algorithms[algorithm];
+	setTimeout(function() {
+		// show the loading indicator after a small delay, in case the algorithm hasn't finished yet!
+		if(loading) loading.reveal(true);
+	}, 500);
 
+	// get the input and parameter values, before starting the measurement
+	var mode = getMode(tab, 'input'), output = mode!='dec'?(action!='decrypt'?'hex':'text'):'dec',
+		input = editorValue(tab, 'input', module.inputs[action]||'text'),
+		parameters = parameterValue(tab, algorithm);
+	
 	// clear editor and set to output mode
-	var output = getMode(tab, 'input')!='dec'?(action=='encrypt'?'hex':'text'):'dec';
 	changeMode(tab, 'output', output, true);
 
-	jQuery.element(tab, 'output').val(convert(
-		apply(editorValue(tab, 'input', module.input||'text'),
-			parameterValue(tab, algorithm), action)
-	).from(module.output||'text').to(output));
+	// apply the algorithm in the worker
+	function handleWorkerCompletion(message) {
+		if(message.data.algorithm!=algorithm||message.data.action!=action||message.data.tab!=tab)
+			return; //this message was not for this completion handler
+		worker.removeEventListener('message', handleWorkerCompletion);
+
+		// convert the result
+		var result = convert(message.data.result).from(module.outputs[action]||'text').to(output),
+			large = result.length>1024*32; //in case the output is larger than 32kb, download a file!
+
+		// set the output values
+		jQuery.element(tab, 'output').toggle(!large).val(!large?result:true);
+		jQuery.element(tab, 'performance').text(Math.round(message.data.time*10)/10);
+		jQuery.element(tab, 'mode', 'output').toggle(!large);
+		stepInput(tab, steps.apply);
+
+		// in the output is large, download a file instead
+		if(large) util.downloadBlob(new Blob([result],
+			{ type: output=='text'?'text/plain':'application/octet-stream' }),
+			getAction(tab)+'.'+(output=='text'?'txt':'bin'));
+
+		button.prop('disabled', false);
+		loading.conceal(true); loading = null;
+	}	
+	worker.addEventListener('message', handleWorkerCompletion, false);
+	worker.postMessage({
+		algorithm: algorithm, action: action, tab: tab,
+		input: input, parameters: parameters
+	});
 }
 
 function getAction(tab) {
@@ -227,16 +250,39 @@ function getMode(tab, name) {
 }
 function changeMode(tab, name, mode, clear) {
 	if(arguments.length<3) mode = getMode(tab, name);
-
 	var editor = jQuery.element(tab, name), group = editor.next('div'),
-		radio = group.find('input[type="radio"][id*="-$1"]'.format(mode));
-
-	var old = group.data('mode')||'text';
+		radio = group.find('input[type="radio"][id*="-$1"]'.format(mode)),
+		file = jQuery.element(tab, 'file', name), old = group.data('mode')||'text';
+	
 	radio.prop('checked', true);
 	group.data('mode', mode);
 
-	editor.val(!clear?convert(editor.val()).from(old).to(mode):null);
 	editor.toggleClass('text-monospace', mode=='hex');
+	editor.prop('disabled', mode=='file');
+
+	if(mode!='file') {
+		editor.val(!clear&&old!='file'?convert(editor.val()).from(old).to(mode):null);
+		editor.data('file-value', null);
+		file.val(null);
+	} else {
+		editor.val('No file chosen...');
+		file.trigger('click'); 
+	}
+}
+function fileChosen(tab, name) {
+	var editor = jQuery.element(tab, name), file = jQuery.element(tab, 'file', name),
+		chosen = file.prop('files')[0];
+	editor.val('Chosen file: '+chosen.name);
+
+	var reader = new FileReader();
+	reader.onload = function () {
+		// check if it is still the same file (e.g if in the meantime the tab was changed)
+		if(file.prop('files')[0]==chosen) {
+			editor.data('file-value', reader.result);
+			stepInput(tab, steps.input);
+		}
+	}
+	reader.readAsBinaryString(chosen);
 }
 
 function convertEditor(tab, name) {
@@ -244,8 +290,9 @@ function convertEditor(tab, name) {
 	editor.val(convert(editor.val()).to(getMode(tab, name)));
 }
 function editorValue(tab, name, mode) {
-	return convert(jQuery.element(tab, name).val())
-		.from(getMode(tab, name)).to(mode||'text');
+	var editor = jQuery.element(tab, name), editorMode = getMode(tab, name);
+	return convert(editorMode!='file'?editor.val():editor.data('file-value'))
+		.from(editorMode!='file'?editorMode:'text').to(mode||'text');
 }
 
 function otherTab(tab) {
@@ -254,8 +301,13 @@ function otherTab(tab) {
 function isComparing() {
 	return !!jQuery.elements(2, 'step', steps.algorithm, ':visible').length;
 }
-function toggleCompare(compare, animate) {
+function toggleCompare(compare, animate, carry) {
 	if(arguments.length<2) { animate = compare; compare = !isComparing(); }
+	if(carry) {
+		jQuery.each(['algorithm', 'input'], function(index, name) {
+			jQuery.element(2, name).val(jQuery.element(1, name).val());
+		});
+	}
 	jQuery('#compare i').removeClass('fa-plus-circle fa-minus-circle').addClass('fa-$1-circle'.format(!compare?'plus':'minus'));
 	jQuery('#compare a').text(!compare?'Add another tab to compare.':'Hide the comparison tab.');
 	jQuery.element(2, 'step', steps.algorithm).revealOrConceal(compare, animate);
@@ -296,7 +348,7 @@ function toggleParameters(tab, algorithm, animate) {
 							stepInput(tab, steps.input); // simulate an input step, in oder to continue to the next step, if all parameters are provided
 						}
 					};
-					if(/\(.*\)$/i.test(value)&&jQuery.isFunction((value=util.limitedScopeEval(value, [tab])||String()).promise))
+					if(/\(.*\)$/i.test(value)&&jQuery.isFunction((value=util.limitedScopeEval(value, { tab: tab })||String()).promise))
 						value.then(fnValue);
 					else fnValue(value);
 				}
@@ -333,11 +385,12 @@ function stepInput(tab, step) {
 	switch(step) {
 		case steps.algorithm:
 			//TODO loading
-			((done=!!algorithm)?requireAlgorithm(algorithm):jQuery.Deferred().resolve()).then(function() {
+			((done=!!algorithm)?shared.requireAlgorithm(algorithm):Promise.resolve()).then(function() {
 				toggleActions(tab);
 				toggleActions(otherTab(tab)); // toggle the action on the other tab as well, so that the action radio button appear / disappear
 				toggleParameters(tab, algorithm, true);
 				toggleHelp(tab, algorithm, true);
+				jQuery.element(tab, 'output').val(null);
 			}, function(e) {
 				alert("Failed!!"+e)
 				//TODO
@@ -369,6 +422,7 @@ exports.stepInput = stepInput;
 exports.changeAction = changeAction;
 exports.applyAlgorithm = applyAlgorithm;
 exports.changeMode = changeMode;
+exports.fileChosen = fileChosen;
 exports.convertEditor = convertEditor;
 exports.toggleCompare = toggleCompare;
 exports.showMore = showMore;

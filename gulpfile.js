@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var changed = require('gulp-changed');
 var nodemon = require('gulp-nodemon');
 var less = require('gulp-less');
 var browserSync = require('browser-sync').create();
@@ -23,19 +24,8 @@ function reloadBrowser(done) {
 	done();
 }
 
-// Compile LESS files from /less into /css
-gulp.task('less', function() {
-	return gulp.src('less/style.less')
-		.pipe(less().on('error', function(e) { console.log(e); this.emit('end'); }))
-		.pipe(header(banner, { pkg: pkg }))
-		.pipe(gulp.dest('css'))
-		.pipe(browserSync.reload({
-			stream: true
-		}))
-});
-
 // Minify compiled CSS
-gulp.task('minify-css', gulp.series('less', function() {
+gulp.task('minify-css', function() {
 	return gulp.src('css/style.css')
 		.pipe(cleanCSS({ compatibility: 'ie8' }))
 		.pipe(rename({ suffix: '.min' }))
@@ -43,7 +33,18 @@ gulp.task('minify-css', gulp.series('less', function() {
 		.pipe(browserSync.reload({
 			stream: true
 		}))
-}));
+});
+
+// Compile LESS files from /less into /css
+gulp.task('less', gulp.series(function() {
+	return gulp.src('less/style.less')
+		.pipe(less().on('error', function(e) { console.log(e); this.emit('end'); }))
+		.pipe(header(banner, { pkg: pkg }))
+		.pipe(gulp.dest('css'))
+		.pipe(browserSync.reload({
+			stream: true
+		}))
+}, 'minify-css'));
 
 // Minify JS
 gulp.task('minify-js', function() {
@@ -51,6 +52,7 @@ gulp.task('minify-js', function() {
 		.pipe(uglify().on('error', function(e) { console.log(e); this.emit('end'); }))
 		.pipe(header(banner, { pkg: pkg }))
 		.pipe(rename({ suffix: '.min' }))
+		.pipe(changed('js'))
 		.pipe(gulp.dest('js'))
 		.pipe(browserSync.reload({
 			stream: true
@@ -68,8 +70,14 @@ gulp.task('copy', function() {
 	gulp.src(['node_modules/jquery/dist/jquery.js', 'node_modules/jquery/dist/jquery.min.js'])
 		.pipe(gulp.dest('ext/jquery'))
 
-	gulp.src(['node_modules/requirejs/require.js', 'node_modules/requirejs/require.min.js'])
+	gulp.src(['node_modules/requirejs/require.js'])
 		.pipe(gulp.dest('ext/requirejs'))
+		.pipe(uglify().on('error', function(e) { console.log(e); this.emit('end'); }))
+		.pipe(rename({ suffix: '.min' }))
+		.pipe(gulp.dest('ext/requirejs'))
+
+	gulp.src(['node_modules/promise-polyfill/dist/polyfill.js', 'node_modules/promise-polyfill/dist/polyfill.min.js'])
+		.pipe(gulp.dest('ext/polyfill'))
 
 	gulp.src([
 		'node_modules/@fortawesome/fontawesome-free-webfonts/**',
@@ -86,9 +94,6 @@ gulp.task('copy', function() {
 		.pipe(rename({ suffix: '.min' }))
 		.pipe(gulp.dest('ext/font-awesome/css'))
 
-	gulp.src(['node_modules/responsive-toolkit/dist/bootstrap-toolkit.js', 'node_modules/responsive-toolkit/dist/bootstrap-toolkit.min.js'])
-		.pipe(gulp.dest('ext/bootstrap-toolkit'))
-
 	gulp.src(['node_modules/node-forge/dist/forge.min.js', 'node_modules/node-forge/dist/forge.all.min.js'])
 		.pipe(gulp.dest('ext/forge'))
 });
@@ -96,7 +101,6 @@ gulp.task('copy', function() {
 // Configure browserWatch task
 gulp.task('watch', function() {
 	gulp.watch('less/*.less', gulp.series('less'));
-	gulp.watch(['css/*.css', '!css/**/*.min.css'], gulp.series('minify-css'));
 	gulp.watch(['js/**/*.js', '!js/**/*.min.js'], gulp.series('minify-js'));
 
 	// Reloads the browser whenever HTML or JS files change
@@ -106,7 +110,7 @@ gulp.task('watch', function() {
 // Node monitor
 gulp.task('nodemon', function(done) {
     var callbackCalled = false;
-    return nodemon({ script: 'server.js', watch: ['server.js', 'helper.js'] }).on('start', function() {
+    return nodemon({ script: 'server.js', watch: ['server.js', 'helper.js', '*.md'] }).on('start', function() {
         if(!callbackCalled) {
             callbackCalled = true;
             done();

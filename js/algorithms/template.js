@@ -3,32 +3,27 @@ var forge = require('node-forge');
 exports.name = 'template';
 exports.displayName = 'Template Algorithm (will NOT be shown on the UI!)';
 exports.group = 'Template Algorithms';
+// note: for algorithms with only one action, the shortcut exports.action = 'action' can be use instead, default value
+exports.actions = ['encrypt', 'decrypt'];
 exports.parameters = [
     {
-        name: 'mode', label: 'Mode of Operation', type: 'select', value: 'CBC', options: [
-            { value: 'ECB', label: 'Electronic Codebook (ECB)' },
-            { value: 'CBC', label: 'Cipher Block Chaining (CBC)' },
-            { value: 'CFB', label: 'Cipher Feedback (CFB)' },
-            { value: 'OFB', label: 'Output Feedback (OFB)' },
-            { value: 'CTR', label: 'Counter (CTR)' },
-            { value: 'GCM', label: 'Galois/Counter Mode (GCM)' }
+        name: 'select', label: 'Select Box', type: 'select', value: 'valueC', options: [
+            { value: 'valueA', label: 'Option A' },
+            { value: 'valueB', label: 'Option B' },
+            { value: 'valueC', label: 'Option C' }
         ]
     },
-    { name: 'key', label: 'Symmetric Key', type: 'editor(hex)', value: 'cryptoExhibit.util.randomBytes(16)', placeholder: 'TODO' },
-    { name: 'iv', label: 'Initialization Vector', type: 'editor(hex)', value: 'cryptoExhibit.util.randomBytes(16)', placeholder: 'TODO' }
+    { name: 'text', label: 'Some Text', type: 'text', value: 'A static value', placeholder: 'TODO' },
+    { name: 'editor', label: 'An Editor', type: 'editor(hex)', value: 'cryptoExhibit.util.randomBytes(16)', placeholder: 'TODO' }
 ];
-exports.input = 'text'; //possible options: text (bytes / string), dec, hex
+// possible options: text (bytes / string), dec, hex; default values are:
+// note: for algorithms with only one action the shortcuts exports.input = 'text', exports.output = 'hex' can be use instead
+exports.input = 'text';
 exports.output = 'text';
 
+// note: for algorithms with multiple actions, the shortcuts exports[action] (e.g. exports.encrypt) can be used instead of one general apply function
 exports.apply = function(input, parameters, action) {
-    var cipher = (action=='encrypt'?forge.cipher.createCipher:forge.cipher.createDecipher)
-        ('AES-'+parameters.mode, parameters.key);
-    cipher.start({ iv: parameters.iv });
-    cipher.update(forge.util.createBuffer(input));			
-    if(cipher.finish()) {
-        return cipher.output.getBytes();
-    } else {
-        //TODO ERROR
-    }
+    // apply the algorithm to the input here
+    // all specified parameters are passed to the function as parameters[name]
+    return input+input; // return the result in the output format 
 };
-

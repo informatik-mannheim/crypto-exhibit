@@ -16,12 +16,9 @@ exports.parameters = [
 ];
 
 exports.apply = function(input, parameters, action) {
-    var key = parameterValue(tab, algorithm, 'key'), iv = parameterValue(tab, algorithm, 'iv');
-
-    var cipher = (encrypt?forge.cipher.createCipher:forge.cipher.createDecipher)(
-        ((algorithm=='des'&&parameterValue(tab, algorithm, 'triple'))?'3':String())+
-            algorithm.toUpperCase()+'-'+parameterValue(tab, algorithm, 'mode'), key);
-    cipher.start({iv: iv});
+    var cipher = (action=='encrypt'?forge.cipher.createCipher:forge.cipher.createDecipher)(
+        (parameters.triple?'3':String())+'des-'+parameters.mode, parameters.key);
+    cipher.start({iv: parameters.iv});
     cipher.update(forge.util.createBuffer(input));			
     if(cipher.finish()) {
         return cipher.output;

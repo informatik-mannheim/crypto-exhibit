@@ -24,6 +24,10 @@
 
 	<body id="page-top">
 		<div class="container mb-5">
+			<div class="float-right mt-5 mr-5">
+				<img src="img/vector.png" height="40px" class="mr-3">
+				<img src="img/hsm.png" height="50px">
+			</div>
 			<div class="jumbotron mt-3">
 				<h1 class="display-3 text-primary"><i class="fas fa-user-secret"></i> Crypto Exhibit</h1>
 				<p class="lead">&hellip; is an open-source interactive online cryptography learning exhibit, providing an easy introduction into cryptography, by making the most common cryptographic algorithms accessible and comparable.</p>
@@ -64,8 +68,9 @@
 		<script src="ext/jquery/jquery.min.js"></script>
 		<script src="ext/bootstrap/js/bootstrap.bundle.min.js"></script>
 		<script src="ext/tether/js/tether.min.js"></script>
-
+		
 		<!-- Custom JavaScript -->
+		<script src="ext/polyfill/polyfill.min.js"></script>
 		<script src="ext/requirejs/require.min.js"></script>
 		<script>
 			requirejs.config({
@@ -75,7 +80,7 @@
 					'node-forge': '../ext/forge/forge.min'
 				}
 			});
-			requirejs(['cjs!main.min'], function(main) {
+			requirejs(['cjs!main']/* TODO change to .min! */, function(main) {
 				window.cryptoExhibit = main;
 			});
 		</script>

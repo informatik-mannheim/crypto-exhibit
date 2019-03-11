@@ -2,5 +2,6 @@
     <button id="apply[<%= tab %>]" class="btn btn-primary btn-lg" onclick="cryptoExhibit.applyAlgorithm(<%= tab %>); cryptoExhibit.stepInput(<%= tab %>, 4); return false">
         <i class="fas fa-lg fa-user-secret pr-2"></i> <span>Apply</span>
     </button>
+    <span id="loading[<%= tab %>]" class="loading-indicator ml-2"><i class="fa fa-spinner fa-spin text-secondary"></i> processing &hellip;</span>
 </div>
 <div id="dummy-<%= step %>[<%= tab %>]" class="d-none d-lg-block col-lg-4"></div>

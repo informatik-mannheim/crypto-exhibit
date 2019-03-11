@@ -5,8 +5,8 @@
         <% var groups = helper.groupArray(algorithms, 'group'); Object.keys(groups).forEach(group=>{ %>
         <optgroup label="<%= group %>">
             <% groups[group].forEach(algorithm=>{ %>
-            <option value="<%= algorithm.name %>"<% if(algorithm.actions) {
-                %>data-actions="<%= algorithm.actions.join(',') %>"<% } 
+            <option value="<%= algorithm.name %>"<% if(algorithm.action||algorithm.actions) {
+                %> data-actions="<%= algorithm.action||algorithm.actions.join(',') %>"<% } 
             %>><%= algorithm.displayName %></option>
             <% }); %>
         </optgroup>

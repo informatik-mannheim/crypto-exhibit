@@ -1,6 +1,11 @@
-<textarea class="form-control mb-1" id="<%= name %>[<%= tab %>]" rows="3" <% var input = input||true; if(input) { %>oninput="cryptoExhibit.stepInput(<%= tab %>, <%= step %>)" onblur="cryptoExhibit.convertEditor(<%= tab %>, '<%= name %>')" placeholder="Enter something here &hellip;"<% } else { %>readonly<% } %><% var mode = mode; if(mode) { %> data-mode="<%= mode %>"<% } %><% var value = value; if(value) { %> data-value="<%= value %>"<% }%>></textarea>
-<div id="mode-<%= name %>[<%= tab %>]" class="form-group">
+<textarea class="form-control mb-1" id="<%= name %>[<%= tab %>]" rows="3" <% var input = input!==false; if(input) { %>oninput="cryptoExhibit.stepInput(<%= tab %>, <%= step %>)" onblur="cryptoExhibit.convertEditor(<%= tab %>, '<%= name %>')" placeholder="Enter something here &hellip;"<% } else { %>readonly<% } %><% var mode = mode; if(mode) { %> data-mode="<%= mode %>"<% } %><% var value = value; if(value) { %> data-value="<%= value %>"<% }%>></textarea>
+<div id="mode-<%= name %>[<%= tab %>]" class="form-group clearfix mb-0"><% if(input) { %>
     <div class="custom-control custom-radio custom-control-inline float-right">
+        <input class="hidden-file" type="file" id="file-<%= name %>[<%= tab %>]" name="file-<%= name %>[<%= tab %>]" onchange="cryptoExhibit.fileChosen(<%= tab %>, '<%= name %>')">
+        <input type="radio" id="mode-<%= name %>-file[<%= tab %>]" name="mode-<%= name %>[<%= tab %>]" value="file" class="custom-control-input" onclick="cryptoExhibit.changeMode(<%= tab %>, '<%= name %>')">
+        <label class="custom-control-label" for="mode-<%= name %>-file[<%= tab %>]">File</label>
+    </div>
+<% } %>    <div class="custom-control custom-radio custom-control-inline float-right">
         <input type="radio" id="mode-<%= name %>-hex[<%= tab %>]" name="mode-<%= name %>[<%= tab %>]" value="hex" class="custom-control-input" onchange="cryptoExhibit.changeMode(<%= tab %>, '<%= name %>')">
         <label class="custom-control-label" for="mode-<%= name %>-hex[<%= tab %>]">Hex</label>
     </div>

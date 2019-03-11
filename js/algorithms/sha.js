@@ -1,8 +1,11 @@
+var forge = require('node-forge');
+
 exports.name = 'sha';
 exports.displayName = 'SHA (Secure Hash Algorithm)';
 exports.group = 'Hash Functions';
-exports.actions = ["hash"];
-exports.paramters = [
+exports.action = 'hash';
+exports.output = 'hex';
+exports.parameters = [
     {
         name: 'version', label: 'Version', type: 'select', value: '1', options: [
             { value: '1', label: 'SHA-1' },
@@ -13,8 +16,8 @@ exports.paramters = [
     }
 ];
 
-exports.apply = function() {
-    var md = forge.md[algorithm+(algorithm=='sha'?parameterValue(tab, algorithm, 'version'):new String())].create();
+exports.apply = function(input, parameters, action) {
+    var md = forge.md['sha'+parameters.version].create();
     md.update(input); // input converted to text / bytes always
-    output = convert(md.digest().toHex()).to('hex');
+    return md.digest().toHex();
 }

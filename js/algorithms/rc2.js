@@ -9,13 +9,11 @@ exports.parameters = [
 ];
 
 exports.apply = function(input, parameters, action) {
-    var key = parameterValue(tab, algorithm, 'key'), iv = parameterValue(tab, algorithm, 'iv');
-			
-    var cipher = (encrypt?forge.rc2.createEncryptionCipher:forge.rc2.createDecryptionCipher)(key);
-    cipher.start(iv);
+    var cipher = (action=='encrypt'?forge.rc2.createEncryptionCipher:forge.rc2.createDecryptionCipher)(parameters.key);
+    cipher.start(parameters.iv);
     cipher.update(forge.util.createBuffer(input));			
     if(cipher.finish()) {
-        output = convert(cipher.output).from('text').to(mode);
+        return cipher.output;
     } else {
         //TODO ERROR
     }
