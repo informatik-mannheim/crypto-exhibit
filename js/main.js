@@ -350,7 +350,8 @@ function toggleCompare(compare, animate, carry) {
 	if(compare&&carry) {
 		var algorithm = getAlgorithm(1);
 		changeAlgorithm(2, algorithm);
-		changeAction(2, 'decrypt');
+		// we'll have to wait until the actions are switched
+		setTimeout(function() { changeAction(2, 'decrypt'); }, 0);
 		changeMode(2, 'input', getMode(1, 'output'));
 		jQuery.element(2, 'input').val(jQuery.element(1, 'output').val());
 		jQuery('[id^="parameter"][id$="[1]"]:input').not(':button').each(function(index, domRef) {
