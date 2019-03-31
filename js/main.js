@@ -188,7 +188,7 @@ function changeAlgorithm(tab, algorithm) {
 }
 function applyAlgorithm(tab) {
 	var progress, waiting = true, done;
-	(progress=jQuery.element(tab, 'progress')).removeClass('progress-nearly-done bg-success bg-danger')
+	(progress=jQuery.element(tab, 'progress')).removeClass('progress-nearly-done bg-success bg-danger').addClass('progress-bar-animated')
 		.width(0).text(new String()).animate({ width:'65%'}, 1250, function() {
 			if(typeof done!='function') {
 				waiting = false;
@@ -241,7 +241,9 @@ function applyAlgorithm(tab) {
 			}
 
 			progress.stop().addClass('progress-nearly-done').addClass(!message.data.error?
-				'bg-success':'bg-danger').animate({ width:'100%' }).text(message.data.error);
+				'bg-success':'bg-danger').animate({ width:'100%' }, function() {
+					progress.removeClass('progress-bar-animated');
+				}).text(message.data.error);
 			button.prop('disabled', false);
 		}
 
