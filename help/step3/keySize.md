@@ -1,1 +1,3 @@
 # What does key size mean?
+
+Keys in cryptography are used in the same way as they are used in the real world: to secure access. Similar to real keys, keys in cryptography get more secure the more notches are carved into them. In computer science the length of a key, so how many characters the key consists of, is equal to the number of notches of a real key. However in cryptography key length is commonly expressed in `bits`. Commonly cryptographic keys have 1024 or even 2048 bits nowadays. That are 2048 notches of either `0` or `1` (notch / no notch) carved into a traditional key.

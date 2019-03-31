@@ -23,15 +23,20 @@ self.addEventListener('message', function(message) {
         }
 
         // execute the algorithm and calculate the time it needed
-        var startTime = performance.now(),
-            result = apply(message.data.input, message.data.parameters, message.data.action),
+        var startTime = performance.now(), time, result, error;
+        try {
+            result = apply(message.data.input, message.data.parameters, message.data.action);
+        } catch(e) {
+            error = e.message;
+        } finally {
             time = performance.now()-startTime;
-        
+        }
+
         self.postMessage({
             // send back algorithm, action and tab, in order for the callee to know whether it was his message
             algorithm: message.data.algorithm, action: message.data.action, tab: message.data.tab,
             // also pass the result and time it took to execute the algorithm
-            result: result, time: time
-        });
+            result: result, error: error, time: time
+        }, result instanceof ArrayBuffer?[result]:null);
     });
 });

@@ -1,1 +1,3 @@
 # Explain the output
+
+Depending on whether you encrypted or decrypted the input, the output might seem like any arbitrary sequence of numbers. In case you tried to decrypt a text, this most likely means that you failed to reproduce the key, necessary to decrypt the original text. For encryption however, this is the goal of most cryptographic algorithms: The output should look as random as possible, to get indistinguishable from any other non-encrypted or real random data. 

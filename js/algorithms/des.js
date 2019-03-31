@@ -21,7 +21,7 @@ exports.apply = function(input, parameters, action) {
     cipher.start({iv: parameters.iv});
     cipher.update(forge.util.createBuffer(input));			
     if(cipher.finish()) {
-        return cipher.output;
+        return cipher.output.getBytes();
     } else {
         //TODO ERROR
     }

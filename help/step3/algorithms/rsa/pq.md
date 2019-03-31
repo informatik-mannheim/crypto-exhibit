@@ -1,0 +1,3 @@
+# What does p and q mean?
+
+**p** and **q** are two so called "prime factors" used as a base input value for the RSA algorithm. The basic idea of the RSA algorithm is to multiply two very large prime numbers (the prime factors). The operation to multiply these two numbers is very simple and can be performed by a computer very quickly. Reverting this operation, so to calculate the given `p` and `q`, if none of both is known, is a significantly harder task. Provided that the prime numbers have been chosen very large and in a secure manner, it is nearly impossible to calculate the original input values.

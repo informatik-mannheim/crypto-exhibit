@@ -22,6 +22,8 @@ exports.apply = function(input, parameters, action) {
     var cipher = (action=='encrypt'?forge.cipher.createCipher:forge.cipher.createDecipher)
         ('AES-'+parameters.mode, parameters.key);
     cipher.start({ iv: parameters.iv });
+
+    //forge.util.ByteBuffer = forge.util.DataBuffer;
     cipher.update(forge.util.createBuffer(input));			
     if(cipher.finish()) {
         return cipher.output.getBytes();

@@ -1,1 +1,3 @@
 # What are cryptographic parameters used for?
+
+Most cryptographic algorithms need *parameters* in order to make them secure and usable. Most commonly the parameters contain a key, or a series of values used to calculate the key. Depending on the cryptographic algorithm used, parameters define how the cryptographic algorithm is executed and which input / output values are expected. As an easy example, the "rotate by places" parameter of the Ceasar chiffre, defines how many letters the alphabet is shifted right, when applying the algorithm. So setting the parameter to `2` would mean every `A` becomes a `C` instead.

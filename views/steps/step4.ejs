@@ -1,7 +1,13 @@
 <div id="step-<%= step %>[<%= tab %>]" class="col-12 col-sm-6 col-md-7 col-lg-4 mb-4<% if(tab>1) { %> d-none d-lg-block<% } %>">
-    <button id="apply[<%= tab %>]" class="btn btn-primary btn-lg" onclick="cryptoExhibit.applyAlgorithm(<%= tab %>); cryptoExhibit.stepInput(<%= tab %>, 4); return false">
-        <i class="fas fa-lg fa-user-secret pr-2"></i> <span>Apply</span>
-    </button>
-    <span id="loading[<%= tab %>]" class="loading-indicator ml-2"><i class="fa fa-spinner fa-spin text-secondary"></i> processing &hellip;</span>
+    <div class="d-flex">
+        <div>
+            <button id="apply[<%= tab %>]" class="btn btn-primary btn-lg" onclick="cryptoExhibit.applyAlgorithm(<%= tab %>); cryptoExhibit.stepInput(<%= tab %>, 4); return false">
+                <i class="fas fa-lg fa-user-secret pr-2"></i> <span>Apply</span>
+            </button>
+        </div>
+        <div class="progress ml-3 flex-grow-1" style="height:48px">
+            <div id="progress[<%= tab %>]" class="progress-bar progress-bar-striped"></div>
+        </div>
+    </div>
 </div>
 <div id="dummy-<%= step %>[<%= tab %>]" class="d-none d-lg-block col-lg-4"></div>

@@ -1,4 +1,8 @@
-var shared = require('./shared'), algorithms = shared.algorithms, util = exports.util = require('./util'), convert = util.convert, worker = new Worker('js/worker.min.js');
+var shared = require('./shared'), 
+	algorithms = shared.algorithms,
+	util = exports.util = require('./util'),
+	convert = util.convert,
+	worker = new Worker('js/worker.min.js');
 
 //#region Prototypes
 
@@ -150,7 +154,18 @@ function parameterValue(tab, algorithm, name) {
 
 	// Enable tooltips & popovers
 	//$('[data-toggle="tooltip"]').tooltip();
-	$('[data-toggle="popover"]').popover();
+	var popoverTarget, popoverId;
+	$('[data-toggle="popover"]').popover({
+		sanitizeFn: function(content) { return content; }
+	}).on('shown.bs.popover', function(oEvent) {
+		popoverTarget = jQuery(oEvent.target);
+		popoverId = jQuery('.popover').attr('id');
+	});
+	jQuery(document).on('click', function(oEvent) {
+		if(popoverId&&oEvent.target.id!=popoverId&&!jQuery(oEvent.target).parents("#"+popoverId).length) {
+			popoverTarget.popover('hide'); popoverId = null;
+		}
+	});
 })(jQuery); // End of use strict
 
 //#endregion
@@ -168,13 +183,25 @@ var steps = (function(step) {
 function getAlgorithm(tab) {
 	return jQuery.element(tab, 'algorithm').val();
 }
+function changeAlgorithm(tab, algorithm) {
+	jQuery.element(tab, 'algorithm').val(algorithm);
+}
 function applyAlgorithm(tab) {
-	var button = jQuery.element(tab, 'apply').prop('disabled', true), loading = jQuery.element(tab, 'loading'),
-		algorithm = getAlgorithm(tab), action = getAction(tab), module = algorithms[algorithm];
-	setTimeout(function() {
-		// show the loading indicator after a small delay, in case the algorithm hasn't finished yet!
-		if(loading) loading.reveal(true);
-	}, 500);
+	var progress, waiting = true, done;
+	(progress=jQuery.element(tab, 'progress')).removeClass('progress-nearly-done bg-success bg-danger')
+		.width(0).text(new String()).animate({ width:'65%'}, 1250, function() {
+			if(typeof done!='function') {
+				waiting = false;
+				progress.animate({
+					width:'95%'
+				}, 2e4, 'linear');
+			} else done();
+		}
+	);
+
+	var button = jQuery.element(tab, 'apply').prop('disabled', true),
+		algorithm = getAlgorithm(tab), action = getAction(tab),
+		module = algorithms[algorithm];
 
 	// get the input and parameter values, before starting the measurement
 	var mode = getMode(tab, 'input'), output = mode!='dec'?(action!='decrypt'?'hex':'text'):'dec',
@@ -190,29 +217,43 @@ function applyAlgorithm(tab) {
 			return; //this message was not for this completion handler
 		worker.removeEventListener('message', handleWorkerCompletion);
 
-		// convert the result
-		var result = convert(message.data.result).from(module.outputs[action]||'text').to(output),
-			large = result.length>1024*32; //in case the output is larger than 32kb, download a file!
+		var racing = false;
+		done = function() {
+			racing = true;
+			
+			if(!message.data.error) {
+				// convert the result
+				var result = convert(message.data.result)
+						.from(module.outputs[action]||'text').to(output),
+					// in case the output is larger than 32kb, download a file!
+					large = result&&typeof result!=='number'?result.length>1024*32:false; 
 
-		// set the output values
-		jQuery.element(tab, 'output').toggle(!large).val(!large?result:true);
-		jQuery.element(tab, 'performance').text(Math.round(message.data.time*10)/10);
-		jQuery.element(tab, 'mode', 'output').toggle(!large);
-		stepInput(tab, steps.apply);
+				// set the output values
+				jQuery.element(tab, 'output').toggle(!large).val(!large?result:true);
+				jQuery.element(tab, 'performance').text(Math.round(message.data.time*10)/10);
+				jQuery.element(tab, 'mode', 'output').toggle(!large);
+				stepInput(tab, steps.apply);
 
-		// in the output is large, download a file instead
-		if(large) util.downloadBlob(new Blob([result],
-			{ type: output=='text'?'text/plain':'application/octet-stream' }),
-			getAction(tab)+'.'+(output=='text'?'txt':'bin'));
+				// in the output is large, download a file instead
+				if(large) util.downloadBlob(new Blob([result],
+					{ type: output=='text'?'text/plain':'application/octet-stream' }),
+					getAction(tab)+'.'+(output=='text'?'txt':'bin'));
+			}
 
-		button.prop('disabled', false);
-		loading.conceal(true); loading = null;
+			progress.stop().addClass('progress-nearly-done').addClass(!message.data.error?
+				'bg-success':'bg-danger').animate({ width:'100%' }).text(message.data.error);
+			button.prop('disabled', false);
+		}
+
+		// if the waiting period is already over and the done function was not called already call done()
+		if(!waiting&&!racing)
+			done();
 	}	
 	worker.addEventListener('message', handleWorkerCompletion, false);
 	worker.postMessage({
 		algorithm: algorithm, action: action, tab: tab,
 		input: input, parameters: parameters
-	});
+	}, input instanceof ArrayBuffer?[input]:null);
 }
 
 function getAction(tab) {
@@ -282,7 +323,7 @@ function fileChosen(tab, name) {
 			stepInput(tab, steps.input);
 		}
 	}
-	reader.readAsBinaryString(chosen);
+	reader.readAsArrayBuffer(chosen);
 }
 
 function convertEditor(tab, name) {
@@ -291,6 +332,7 @@ function convertEditor(tab, name) {
 }
 function editorValue(tab, name, mode) {
 	var editor = jQuery.element(tab, name), editorMode = getMode(tab, name);
+	// convert (based on the forge library) can actually also handle ArrayBuffers
 	return convert(editorMode!='file'?editor.val():editor.data('file-value'))
 		.from(editorMode!='file'?editorMode:'text').to(mode||'text');
 }
@@ -303,9 +345,15 @@ function isComparing() {
 }
 function toggleCompare(compare, animate, carry) {
 	if(arguments.length<2) { animate = compare; compare = !isComparing(); }
-	if(carry) {
-		jQuery.each(['algorithm', 'input'], function(index, name) {
-			jQuery.element(2, name).val(jQuery.element(1, name).val());
+	if(compare&&carry) {
+		var algorithm = getAlgorithm(1);
+		changeAlgorithm(2, algorithm);
+		changeAction(2, 'decrypt');
+		changeMode(2, 'input', getMode(1, 'output'));
+		jQuery.element(2, 'input').val(jQuery.element(1, 'output').val());
+		jQuery('[id^="parameter"][id$="[1]"]:input').not(':button').each(function(index, domRef) {
+			var name = matchElementId(domRef.id)[1], elementA = jQuery(domRef), elementB = jQuery.element(2, name)
+			elementB.val(elementA.val()).prop('checked', elementA.prop('checked')).prop('selected', elementA.prop('selected'));
 		});
 	}
 	jQuery('#compare i').removeClass('fa-plus-circle fa-minus-circle').addClass('fa-$1-circle'.format(!compare?'plus':'minus'));
@@ -336,7 +384,8 @@ function toggleStep(tab, step, done, animate) {
 	}
 }
 function toggleParameters(tab, algorithm, animate) {
-	var parameters; if((parameters=jQuery.parameter(tab, algorithm, true)).length) { // switch animation, in case parameters are available ...
+	var parameters;
+	if(algorithm&&(parameters=jQuery.parameter(tab, algorithm, true)).length) { // switch animation, in case parameters are available ...
 		animate = jQuery.parameter(tab).filter(':visible').length&&animate; // animate in case other parameters are already visible, otherwise the reveal animation of the step will do
 		jQuery.parameter(tab, true).conceal(animate).promise().done(function() {
 			parameters.each(function() {
@@ -375,6 +424,14 @@ function toggleHelp(tab, algorithm, animate) {
 	});
 }
 
+function startOver() {
+	toggleCompare(false, false); // hide compare
+	jQuery(':input').not(':button, :hidden').val('')
+		.removeAttr('checked').removeAttr('selected');
+	stepInput(1, steps.algorithm);
+	jQuery(document).click();
+}
+
 function showMore(step) {
 	jQuery.element('help', step).children('button').conceal(true).end()
 		.children('[data-help="all"], [data-help="'+getAlgorithm()+'"]').reveal(true);
@@ -391,8 +448,9 @@ function stepInput(tab, step) {
 				toggleParameters(tab, algorithm, true);
 				toggleHelp(tab, algorithm, true);
 				jQuery.element(tab, 'output').val(null);
+				jQuery.element(tab, 'progress').text(null).width(0);
 			}, function(e) {
-				alert("Failed!!"+e)
+				alert("Failed!! "+e)
 				//TODO
 			});
 			break;
@@ -422,6 +480,7 @@ exports.stepInput = stepInput;
 exports.changeAction = changeAction;
 exports.applyAlgorithm = applyAlgorithm;
 exports.changeMode = changeMode;
+exports.startOver = startOver;
 exports.fileChosen = fileChosen;
 exports.convertEditor = convertEditor;
 exports.toggleCompare = toggleCompare;

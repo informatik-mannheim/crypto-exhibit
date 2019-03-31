@@ -110,7 +110,7 @@ gulp.task('watch', function() {
 // Node monitor
 gulp.task('nodemon', function(done) {
     var callbackCalled = false;
-    return nodemon({ script: 'server.js', watch: ['server.js', 'helper.js', '*.md'] }).on('start', function() {
+    return nodemon({ script: 'server.js', watch: ['server.js', 'helper.js', '**/*.md'] }).on('start', function() {
         if(!callbackCalled) {
             callbackCalled = true;
             done();

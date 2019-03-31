@@ -11,6 +11,6 @@
   height: 1px;
   opacity: 0;
 }
-.loading-indicator {
-  font-size: 19px;
+.progress-nearly-done {
+  transition: background-color 100ms linear;
 }

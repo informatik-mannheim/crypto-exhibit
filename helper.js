@@ -3,7 +3,6 @@ const glob = require('glob');
 const path = require('path');
 const assert = require('assert');
 const marked = require('marked');
-
 exports.groupArray = require('group-array');
 
 exports.requireAlgorithm = function(nameOrPath) {
