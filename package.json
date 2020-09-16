@@ -32,7 +32,7 @@
     "group-array": "^0.3.3",
     "gulp-changed": "^3.2.0",
     "marked": "^0.6.1",
-    "node-forge": "^0.8.1",
+    "node-forge": "^0.10.0",
     "promise-polyfill": "^8.1.0",
     "requirejs": "^2.3.6"
   }
